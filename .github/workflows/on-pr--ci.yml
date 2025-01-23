@@ -1,0 +1,76 @@
+name: Pull request CI
+
+on:
+  pull_request:
+    types: [ opened, synchronize ] # Whenever new changes are pushed to an existing Pull Request
+    branches: [ main ] # When a Pull Request to branch `main` is opened
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true # Cancel previous pipelines if there is a new pushed commit on the branch
+
+env:
+  HR_STAGE: dev
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+
+  # PR checks are not run for release branches, because the prod release pipeline does its own checks
+  code_checks:
+    name: CI Checks
+    if: ${{ !startsWith(github.head_ref, 'release/') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install ruby (dependency of Danger)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate Token
+        id: generate-token
+        uses: healthrhythms/action-github-app-token@v2.0.0
+        with:
+          app_id: ${{ secrets.HR_CICD_APP_ID }}
+          private_key: ${{ secrets.HR_CICD_APP_KEY }}
+
+      - name: Get composite run steps repository
+        uses: actions/checkout@v3
+        with:
+          repository: healthrhythms/hrworkflows
+          token: ${{ steps.generate-token.outputs.token }}
+          path: .github/hrworkflows
+
+      - name: Install internal dependencies
+        run: |
+          pip install --upgrade awscli
+          aws s3 cp "s3://hrhythms-dev1-code/hrcore/$HR_STAGE-dist.zip" hrcore.zip
+          pip install hrcore.zip[infra] -r req.txt
+          rm hrcore.zip
+
+      - name: Run pre-commit
+        uses: ./.github/hrworkflows/run-pre-commit
+        with:
+          from-ref: origin/${{ github.event.pull_request.base.ref }}
+          to-ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check PR format with Danger
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ steps.generate-token.outputs.token }}
+        uses: ./.github/hrworkflows/check-pr-format-with-danger
+        with:
+          testable_files_folder: reponame
+          tests_folder: tests

@@ -1,0 +1,48 @@
+name: Update Notion Task On Merged Pull Request
+run-name: ${{ github.actor }} merged a PR
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  Update-Notion-Task-On-Merge-To-Main:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main'
+    steps:
+      # required for accessing files in repository.
+      - uses: actions/checkout@v3
+
+      - name: Generate Token
+        id: generate-token
+        uses: healthrhythms/action-github-app-token@v2.0.0
+        with:
+          app_id: ${{ secrets.HR_CICD_APP_ID }}
+          private_key: ${{ secrets.HR_CICD_APP_KEY }}
+
+      - name: Get composite run steps repository
+        uses: actions/checkout@v3
+        with:
+          repository: healthrhythms/hrworkflows
+          token: ${{ steps.generate-token.outputs.token }}
+          path: .github/hrworkflows
+
+      # use composite actions
+      - name: Get Notion Task Id
+        id: notion-task-id
+        uses: ./.github/hrworkflows/get-notion-task-id-from-title
+        with:
+          pr-title: ${{ github.event.pull_request.title }}
+
+      - name: Comment On Notion Page
+        env:
+          GITHUB_PR_URL: ${{ github.event.pull_request.html_url }}
+        if: steps.notion-task-id.outputs.task-id != ''
+        uses: ./.github/hrworkflows/post-notion-task-comment
+        with:
+          message: "Pull request merged: ${{ github.event.pull_request.html_url }}"
+          notion-api-secret: ${{ secrets.NOTION_API_SECRET }}
+          page-id: ${{ steps.notion-task-id.outputs.task-id }}

@@ -1,0 +1,65 @@
+name: 'Code merged: Staging Deployment'
+run-name: ${{ github.actor }} merged code into main, deploying to stag env
+
+on:
+  push:
+    branches:
+      - main # Will run when a PR is merged or when a commit is made directly to the main branch
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true # Cancel previous pipelines if there is a new pushed commit on the branch
+
+env:
+  HR_STAGE: stag
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+
+  deploy_to_stag_environment:
+    name: Deploy to staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate Token
+        id: generate-token
+        uses: healthrhythms/action-github-app-token@v2.0.0
+        with:
+          app_id: ${{ secrets.HR_CICD_APP_ID }}
+          private_key: ${{ secrets.HR_CICD_APP_KEY }}
+
+      - name: Get composite run steps repository
+        uses: actions/checkout@v3
+        with:
+          repository: healthrhythms/hrworkflows
+          token: ${{ steps.generate-token.outputs.token }}
+          path: .github/hrworkflows
+
+      - name: Install internal dependencies
+        run: |
+          pip install --upgrade awscli
+          aws s3 cp "s3://hrhythms-dev1-code/hrcore/$HR_STAGE-dist.zip" hrcore.zip
+          pip install hrcore.zip[infra] -r req.txt
+          rm hrcore.zip
+
+      - name: Get repo name
+        id: get-repo-name
+        uses: ./.github/hrworkflows/get-repo-name
+
+      # - name: Deploy code to stag
+      #   env:
+      #     REPO_NAME: ${{ steps.get-repo-name.outputs.repo-name }}
+      #   run: sh ./upload_code.sh ${{ env.REPO_NAME }} $HR_STAGE

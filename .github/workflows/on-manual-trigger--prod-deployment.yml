@@ -1,0 +1,124 @@
+name: ⛑️ Deploy to production
+run-name: ${{ github.actor }} triggered a new prod release deployment
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true # Cancel previous pipelines if there is a new pushed commit on the branch
+
+env:
+  HR_STAGE: prod
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  RELEASES_SLACK_CHANNEL_WEBHOOK_URL: ${{ secrets.RELEASES_SLACK_CHANNEL_WEBHOOK_URL }}
+
+jobs:
+
+  deploy_to_prod_environment:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate Token
+        id: generate-token
+        uses: healthrhythms/action-github-app-token@v2.0.0
+        with:
+          app_id: ${{ secrets.HR_CICD_APP_ID }}
+          private_key: ${{ secrets.HR_CICD_APP_KEY }}
+
+      - name: Get composite run steps repository
+        uses: actions/checkout@v3
+        with:
+          repository: healthrhythms/hrworkflows
+          token: ${{ steps.generate-token.outputs.token }}
+          path: .github/hrworkflows
+
+      - name: Install internal dependencies
+        run: |
+          pip install --upgrade awscli
+          aws s3 cp "s3://hrhythms-dev1-code/hrcore/$HR_STAGE-dist.zip" hrcore.zip
+          pip install hrcore.zip[infra] -r req.txt
+          rm hrcore.zip
+
+      - name: Update changelog
+        id: update-changelog
+        uses: ./.github/hrworkflows/update-changelog
+
+      - name: Prepare committing the changelog
+        run: |
+          git config user.name "github-actions"
+          git config user.email "<>"
+          git status
+
+      - name: Get repo name
+        id: get-repo-name
+        uses: ./.github/hrworkflows/get-repo-name
+
+      # - name: Deploy code to production
+      #   id: prod-deploy
+      #   env:
+      #     REPO_NAME: ${{ steps.get-repo-name.outputs.repo-name }}
+      #   run: sh ./upload_code.sh ${{ env.REPO_NAME }} $HR_STAGE
+
+      # This step commits all local changes and pushes them to the defined branch
+      - name: Create Pull Request
+        if: steps.prod-deploy.outcome == 'success'
+        id: cpr
+        env:
+          NEW_VERSION: ${{ steps.update-changelog.outputs.new-version }}
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          commit-message: Update changelog for ${{ env.NEW_VERSION }}
+          base: main
+          branch: release/${{ env.NEW_VERSION }}
+          delete-branch: true
+          title: Update changelog for ${{ env.NEW_VERSION }}
+          body: |
+            This is an auto-generated pull request to deploy a production release. Will be merged automatically once the related pipeline completes successfully.
+          labels: |
+            no-ticket
+            release
+          assignees: ${{ github.actor }}
+          draft: false
+
+      - name: Merge Pull Request
+        id: merge-pr
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: juliangruber/merge-pull-request-action@v1
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          number: ${{ steps.cpr.outputs.pull-request-number }}
+          method: squash
+
+      - name: Add git tag
+        if: steps.merge-pr.outcome == 'success'
+        env:
+          NEW_VERSION: ${{ steps.update-changelog.outputs.new-version }}
+        run: |
+          git checkout main
+          git pull
+          create_release.sh ${{ env.NEW_VERSION }}
+
+      - name: Post release notes to Slack
+        env:
+          NEW_VERSION: ${{ steps.update-changelog.outputs.new-version }}
+          REPO_NAME: ${{ steps.get-repo-name.outputs.repo-name }}
+        uses: ./.github/hrworkflows/post-release-notes-on-slack
+        with:
+          version: ${{ env.NEW_VERSION }}
+          repository: ${{ env.REPO_NAME }}
