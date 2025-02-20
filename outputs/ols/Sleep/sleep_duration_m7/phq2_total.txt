@@ -1,0 +1,30 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:             phq2_total   R-squared:                       0.006
+Model:                            OLS   Adj. R-squared:                  0.001
+Method:                 Least Squares   F-statistic:                     1.202
+Date:                Thu, 20 Feb 2025   Prob (F-statistic):              0.308
+Time:                        17:21:32   Log-Likelihood:                -1606.2
+No. Observations:                 791   AIC:                             3222.
+Df Residuals:                     786   BIC:                             3246.
+Df Model:                           4                                         
+Covariance Type:            nonrobust                                         
+=========================================================================================================================
+                                                            coef    std err          t      P>|t|      [0.025      0.975]
+-------------------------------------------------------------------------------------------------------------------------
+Intercept                                                 3.4771      0.369      9.416      0.000       2.752       4.202
+sleep_duration_m7:C(sex)[Female]:C(age_binary)[old]   -4.406e-06   1.46e-05     -0.302      0.763    -3.3e-05    2.42e-05
+sleep_duration_m7:C(sex)[Male]:C(age_binary)[old]     -2.413e-05   1.78e-05     -1.357      0.175    -5.9e-05    1.08e-05
+sleep_duration_m7:C(sex)[Female]:C(age_binary)[young] -7.668e-06   1.44e-05     -0.533      0.594   -3.59e-05    2.06e-05
+sleep_duration_m7:C(sex)[Male]:C(age_binary)[young]   -1.872e-05   1.67e-05     -1.118      0.264   -5.16e-05    1.42e-05
+==============================================================================
+Omnibus:                      244.819   Durbin-Watson:                   1.980
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               37.942
+Skew:                           0.005   Prob(JB):                     5.77e-09
+Kurtosis:                       1.927   Cond. No.                     1.08e+05
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 1.08e+05. This might indicate that there are
+strong multicollinearity or other numerical problems.
