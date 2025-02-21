@@ -3,8 +3,8 @@
 Dep. Variable:                 phq_q8   R-squared:                       0.022
 Model:                            OLS   Adj. R-squared:                  0.020
 Method:                 Least Squares   F-statistic:                     10.27
-Date:                Thu, 20 Feb 2025   Prob (F-statistic):           3.19e-08
-Time:                        17:21:33   Log-Likelihood:                -2533.4
+Date:                Fri, 21 Feb 2025   Prob (F-statistic):           3.19e-08
+Time:                        17:36:09   Log-Likelihood:                -2533.4
 No. Observations:                1808   AIC:                             5077.
 Df Residuals:                    1803   BIC:                             5104.
 Df Model:                           4                                         
