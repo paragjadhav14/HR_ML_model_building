@@ -4,3 +4,4 @@ device_use_percent_m7
 walking_rate_m7
 step_count_m7
 activity_percent_m7
+sleep_duration_m7
