@@ -1,7 +1,25 @@
-steps_relative_amplitude_m7
-sleep_routine_index_m7
-device_use_percent_m7
-walking_rate_m7
-step_count_m7
-activity_percent_m7
-sleep_duration_m7
+
+#Acitivity
+active_time_m7
+activity_percent_m7 (*)
+step_count_m7 (*)
+walking_rate_m7 (*)
+
+
+#Attention
+device_use_percent_m7 (*)
+
+
+#Routine
+sleep_routine_index_m7 (*)
+steps_relative_amplitude_m7 (*)
+
+
+#Sleep
+sleep_duration_m7 (*)
+
+
+#Social
+loc_entropy_m7 (*)
+num_location_clusters_m7 (*)
+time_at_home_m7 (*)
