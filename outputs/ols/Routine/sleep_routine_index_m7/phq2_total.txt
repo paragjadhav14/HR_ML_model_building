@@ -3,8 +3,8 @@
 Dep. Variable:             phq2_total   R-squared:                       0.020
 Model:                            OLS   Adj. R-squared:                  0.018
 Method:                 Least Squares   F-statistic:                     9.932
-Date:                Thu, 20 Feb 2025   Prob (F-statistic):           5.90e-08
-Time:                        17:21:33   Log-Likelihood:                -3923.2
+Date:                Mon, 03 Mar 2025   Prob (F-statistic):           5.90e-08
+Time:                        15:15:41   Log-Likelihood:                -3923.2
 No. Observations:                1965   AIC:                             7856.
 Df Residuals:                    1960   BIC:                             7884.
 Df Model:                           4                                         
@@ -18,7 +18,7 @@ sleep_routine_index_m7:C(sex)[Male]:C(age_binary)[old]        -3.2581      0.562
 sleep_routine_index_m7:C(sex)[Female]:C(age_binary)[young]    -3.0841      0.541     -5.705      0.000      -4.144      -2.024
 sleep_routine_index_m7:C(sex)[Male]:C(age_binary)[young]      -3.3746      0.546     -6.176      0.000      -4.446      -2.303
 ==============================================================================
-Omnibus:                      452.474   Durbin-Watson:                   1.964
+Omnibus:                      452.474   Durbin-Watson:                   0.916
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):               84.463
 Skew:                           0.066   Prob(JB):                     4.56e-19
 Kurtosis:                       1.993   Cond. No.                         32.2

@@ -3,8 +3,8 @@
 Dep. Variable:                 phq_q8   R-squared:                       0.027
 Model:                            OLS   Adj. R-squared:                  0.025
 Method:                 Least Squares   F-statistic:                     12.74
-Date:                Thu, 20 Feb 2025   Prob (F-statistic):           3.15e-10
-Time:                        17:21:33   Log-Likelihood:                -2530.8
+Date:                Mon, 03 Mar 2025   Prob (F-statistic):           3.15e-10
+Time:                        15:15:42   Log-Likelihood:                -2530.8
 No. Observations:                1810   AIC:                             5072.
 Df Residuals:                    1805   BIC:                             5099.
 Df Model:                           4                                         
@@ -18,7 +18,7 @@ activity_percent_m7:C(sex)[Male]:C(age_binary)[old]        -3.3035      1.715   
 activity_percent_m7:C(sex)[Female]:C(age_binary)[young]     3.8590      0.853      4.522      0.000       2.185       5.533
 activity_percent_m7:C(sex)[Male]:C(age_binary)[young]       4.0420      1.091      3.705      0.000       1.902       6.182
 ==============================================================================
-Omnibus:                      192.546   Durbin-Watson:                   1.967
+Omnibus:                      192.546   Durbin-Watson:                   0.984
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):              249.158
 Skew:                           0.896   Prob(JB):                     7.87e-55
 Kurtosis:                       2.690   Cond. No.                         77.9

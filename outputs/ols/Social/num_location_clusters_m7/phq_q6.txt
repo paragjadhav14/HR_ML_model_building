@@ -3,8 +3,8 @@
 Dep. Variable:                 phq_q6   R-squared:                       0.019
 Model:                            OLS   Adj. R-squared:                  0.017
 Method:                 Least Squares   F-statistic:                     10.69
-Date:                Thu, 20 Feb 2025   Prob (F-statistic):           1.40e-08
-Time:                        17:21:33   Log-Likelihood:                -3194.5
+Date:                Mon, 03 Mar 2025   Prob (F-statistic):           1.40e-08
+Time:                        15:15:41   Log-Likelihood:                -3194.5
 No. Observations:                2201   AIC:                             6399.
 Df Residuals:                    2196   BIC:                             6428.
 Df Model:                           4                                         
@@ -18,7 +18,7 @@ num_location_clusters_m7:C(sex)[Male]:C(age_binary)[old]        -0.0046      0.0
 num_location_clusters_m7:C(sex)[Female]:C(age_binary)[young]    -0.0018      0.001     -2.102      0.036      -0.003      -0.000
 num_location_clusters_m7:C(sex)[Male]:C(age_binary)[young]      -0.0064      0.002     -3.395      0.001      -0.010      -0.003
 ==============================================================================
-Omnibus:                     1340.607   Durbin-Watson:                   2.008
+Omnibus:                     1340.607   Durbin-Watson:                   0.922
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):              125.208
 Skew:                           0.049   Prob(JB):                     6.48e-28
 Kurtosis:                       1.836   Cond. No.                         41.8
