@@ -1,0 +1,28 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:             phq8_total   R-squared:                       0.021
+Model:                            OLS   Adj. R-squared:                  0.018
+Method:                 Least Squares   F-statistic:                     8.659
+Date:                Thu, 20 Mar 2025   Prob (F-statistic):           6.48e-07
+Time:                        21:39:09   Log-Likelihood:                -5221.8
+No. Observations:                1633   AIC:                         1.045e+04
+Df Residuals:                    1628   BIC:                         1.048e+04
+Df Model:                           4                                         
+Covariance Type:            nonrobust                                         
+=============================================================================================================================
+                                                                coef    std err          t      P>|t|      [0.025      0.975]
+-----------------------------------------------------------------------------------------------------------------------------
+Intercept                                                    12.9316      0.440     29.399      0.000      12.069      13.794
+Q('walking_rate_m14'):C(sex)[Female]:C(age_binary)[old]      -0.1428      0.187     -0.762      0.446      -0.511       0.225
+Q('walking_rate_m14'):C(sex)[Male]:C(age_binary)[old]        -0.8038      0.244     -3.293      0.001      -1.283      -0.325
+Q('walking_rate_m14'):C(sex)[Female]:C(age_binary)[young]     0.1657      0.155      1.071      0.284      -0.138       0.469
+Q('walking_rate_m14'):C(sex)[Male]:C(age_binary)[young]      -0.4167      0.173     -2.410      0.016      -0.756      -0.078
+==============================================================================
+Omnibus:                      122.997   Durbin-Watson:                   1.982
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               41.448
+Skew:                          -0.006   Prob(JB):                     9.99e-10
+Kurtosis:                       2.220   Cond. No.                         8.00
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
